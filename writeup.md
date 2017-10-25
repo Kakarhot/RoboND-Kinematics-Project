@@ -186,6 +186,13 @@ With this rotation matrix, it is possible to derive the Euler angles.
 I used a [tf transformations](http://www.lfd.uci.edu/~gohlke/code/transformations.py.html) function called `euler_from_matrix` that takes in a numpy rotation matrix and Euler axis sequence, and returns the three Euler angles (alpha, beta and gamma).
 
 The rotation matrix I provided used the Euler definition of `XYZ`, which is a Tait-Bryan angle combination. With the alpha, beta and gamma angles, I mapped them to theta 4, theta 5 and theta 6, respectively.
+```
+alpha, beta, gamma = tf.transformations.euler_from_matrix(
+R3_6_np, axes='rxyz') 
+theta4 = alpha
+theta5 = beta
+theta6 = gamma
+```
 
 However, theta 4 and theta 5 required these additional calculations:
 ```

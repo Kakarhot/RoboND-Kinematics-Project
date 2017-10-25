@@ -20,11 +20,17 @@ You're reading it!
 ### Kinematic Analysis
 #### 1. Run the forward_kinematics demo and evaluate the kr210.urdf.xacro file to perform kinematic analysis of Kuka KR210 robot and derive its DH parameters.
 
+##### Denavit-Hartenberg Diagram
+
 Here is a Denavit-Hartenberg (DH) diagram of the arm:
 
 ![alt text][image1]
 
-From the above, and using the parameters from the URDF file, the following DH parameter table was derived.
+The arm contains six revolute joints connected to each other in a linear fashion.
+
+##### Denavit-Hartenberg Parameters
+
+Based on the arm's specifications, I was able to derive the following parameters that were also used within the DH diagram. My method pretty much followed the project videos for KR210 Forward Kinematics 1, 2 and 3. Note that these values relate to modified DH parameters.
 
 i | alpha(i-1) | a(i-1) | di | theta(i)
 --- | --- | --- | --- | ---
@@ -35,6 +41,8 @@ i | alpha(i-1) | a(i-1) | di | theta(i)
 5 | pi/2 | 0 | 0 | q5
 6 | -pi/2 | 0 | 0 | q6
 7(gripper) | 0 | 0 | 0.303 | 0
+
+The a and α parameters do not change from orientation to orientation because they are specific to the arm. However, the θ and d parameters can change depending on the orientation. For this arm, only the θ parameters will change since all the joints are revolute.
 
 #### 2. Using the DH parameter table you derived earlier, create individual transformation matrices about each joint. In addition, also generate a generalized homogeneous transform between base_link and gripper_link using only end-effector(gripper) pose.
 

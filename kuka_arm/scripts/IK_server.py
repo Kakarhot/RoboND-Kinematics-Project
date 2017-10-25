@@ -12,11 +12,13 @@
 # import modules
 import rospy
 import tf
+import numpy as np
 from kuka_arm.srv import *
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from geometry_msgs.msg import Pose
 from mpmath import *
 from sympy import *
+
 
 
 def handle_calculate_IK(req):
@@ -132,9 +134,18 @@ def handle_calculate_IK(req):
 
 	    R3_6 = R0_3.inv("LU") * ROT_EE
 
-	    theta4 = atan2(R3_6[2,2], -R3_6[0,2])
-	    theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]),R3_6[1,2])
-	    theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+            # tf requires a numpy matrix instead of a sympy matrix
+            R3_6_np = np.array(R3_6).astype(np.float64)
+
+            # Convert the rotation matrix to Euler angles using tf
+            alpha, beta, gamma = tf.transformations.euler_from_matrix(
+                R3_6_np, axes='rxyz') 
+            theta4 = alpha
+            theta5 = beta
+            theta6 = gamma
+
+            theta4 = np.pi/2 + theta4
+            theta5 = np.pi/2 - theta5
 		
             # Populate response for the IK request
             # In the next line replace theta1,theta2...,theta6 by your joint angle variables

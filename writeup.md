@@ -174,16 +174,23 @@ theta2 = pi / 2 - beta2 - atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1] * WC[1]
 theta3 = pi / 2 - (beta3 + 0.054/1.5)
 ```
 
-For the Inverse Orientation problem, we need to find values of the final three joint variables.
+To derive the inverse kinematic orientation, I calculate the rotation matrix of joints 4, 5 and 6 (the spherical wrist), then calculate the Euler angles from this rotation matrix.
 
-R3_6 = inv(R0_3) * Rrpy
-
-The resultant matrix on the RHS (Right Hand Side of the equation) does not have any variables after substituting the joint angle values, and hence comparing LHS (Left Hand Side of the equation) with RHS will result in equations for joint 4, 5, and 6.
-
+I calculate the spherical wrist's rotation matrix by using this formula:
 ```
-theta4 = atan2(R3_6[2,2], -R3_6[0,2])
-theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]),R3_6[1,2])
-theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+R3_6 = inv(R0_3) * Rrpy
+```
+
+With this rotation matrix, it is possible to derive the Euler angles.
+
+I used a [tf transformations](http://www.lfd.uci.edu/~gohlke/code/transformations.py.html) function called `euler_from_matrix` that takes in a numpy rotation matrix and Euler axis sequence, and returns the three Euler angles (alpha, beta and gamma).
+
+The rotation matrix I provided used the Euler definition of `XYZ`, which is a Tait-Bryan angle combination. With the alpha, beta and gamma angles, I mapped them to theta 4, theta 5 and theta 6, respectively.
+
+However, theta 4 and theta 5 required these additional calculations:
+```
+theta4 = np.pi/2 + theta4
+theta5 = np.pi/2 - theta5
 ```
 
 ### Project Implementation
